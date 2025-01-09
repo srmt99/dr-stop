@@ -37,6 +37,7 @@ def generate_fortune(transcription_text):
     }
     
     try:
+        print("Sending to API:", prompt)  # Debug print
         response = requests.post(DEEPSEEK_API_URL, headers=headers, json=data)
         response.raise_for_status()
         result = response.json()
