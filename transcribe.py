@@ -46,17 +46,33 @@ def process_all_mp3_files():
 
     # Process each MP3 file
     for mp3_file in mp3_files:
-        print(f"Processing {mp3_file.name}...")
-        
-        # Transcribe the audio
-        transcription = transcribe_audio(str(mp3_file))
-        
-        # Save transcription to file
-        output_file = transcriptions_dir / f"{mp3_file.stem}.txt"
-        with open(output_file, "w", encoding="utf-8") as f:
-            f.write(transcription)
-        
-        print(f"Transcription saved to {output_file}\n")
+        try:
+            print(f"Processing {mp3_file.name}...")
+            
+            # Check if file exists and is readable
+            if not mp3_file.is_file():
+                print(f"Error: File {mp3_file.name} does not exist or is not accessible")
+                continue
+                
+            # Transcribe the audio
+            try:
+                transcription = transcribe_audio(str(mp3_file))
+            except Exception as e:
+                print(f"Error processing {mp3_file.name}: {str(e)}")
+                continue
+                
+            # Save transcription to file
+            output_file = transcriptions_dir / f"{mp3_file.stem}.txt"
+            try:
+                with open(output_file, "w", encoding="utf-8") as f:
+                    f.write(transcription)
+                print(f"Transcription saved to {output_file}\n")
+            except IOError as e:
+                print(f"Error saving transcription for {mp3_file.name}: {str(e)}")
+                
+        except Exception as e:
+            print(f"Unexpected error processing {mp3_file.name}: {str(e)}")
+            continue
 
 if __name__ == "__main__":
     process_all_mp3_files()
