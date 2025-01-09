@@ -1,7 +1,43 @@
 from flask import Flask, send_file, render_template, request, session
 import random
+import requests
+import json
 from pathlib import Path
 from datetime import timedelta
+
+DEEPSEEK_API_URL = "https://api.deepseek.com/v1/chat/completions"
+DEEPSEEK_API_KEY = "your-deepseek-api-key"  # Replace with your actual API key
+
+def generate_fortune(transcription_text):
+    """Generate a fortune telling using DeepSeek API"""
+    headers = {
+        "Authorization": f"Bearer {DEEPSEEK_API_KEY}",
+        "Content-Type": "application/json"
+    }
+    
+    prompt = f"""
+    این متن یک فال است. لطفاً یک فال طنز و خنده‌دار ۲-۳ جمله‌ای به زبان فارسی بنویس که با این متن مرتبط باشد اما محتوای نامناسب نداشته باشد:
+    {transcription_text}
+    """
+    
+    data = {
+        "model": "deepseek-chat",
+        "messages": [
+            {"role": "system", "content": "You are a funny Persian fortune teller."},
+            {"role": "user", "content": prompt}
+        ],
+        "temperature": 0.7,
+        "max_tokens": 150
+    }
+    
+    try:
+        response = requests.post(DEEPSEEK_API_URL, headers=headers, json=data)
+        response.raise_for_status()
+        result = response.json()
+        return result['choices'][0]['message']['content']
+    except Exception as e:
+        print(f"Error generating fortune: {e}")
+        return "امروز فال‌گیری خوابه! بعداً بیا :)"
 
 app = Flask(__name__)
 app.secret_key = 'your-secret-key-here'  # Change this to a real secret key
@@ -33,14 +69,16 @@ def dr_stop():
     voice_number = voice_file.stem  # Get the number from filename (without extension)
     transcription_file = Path(f"transcriptions/{voice_number}.txt")
     
+    fortune_text = ""
     if transcription_file.exists():
         with open(transcription_file, 'r', encoding='utf-8') as f:
             transcription_text = f.read().strip()
+            fortune_text = generate_fortune(transcription_text)
 
     # Serve an HTML page with an embedded audio player
     return render_template('index.html',
         mimetype="audio/mpeg" if voice_file.suffix == ".mp3" else "audio/ogg",
-        transcription=transcription_text)
+        transcription=fortune_text)
 
 @app.route('/dr_avatar')
 def serve_avatar():
