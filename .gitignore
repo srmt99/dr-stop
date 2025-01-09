@@ -1,2 +1,9 @@
 .aider*
 .env
+*.env
+.env*
+env/
+venv/
+ENV/
+.env.local
+.env.*.local

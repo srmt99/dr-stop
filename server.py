@@ -4,9 +4,16 @@ import requests
 import json
 from pathlib import Path
 from datetime import timedelta
+from dotenv import load_dotenv
+import os
+
+# Load environment variables from .env file
+load_dotenv()
 
 DEEPSEEK_API_URL = "https://api.deepseek.com/v1/chat/completions"
-DEEPSEEK_API_KEY = "your-deepseek-api-key"  # Replace with your actual API key
+DEEPSEEK_API_KEY = os.getenv("DEEPSEEK_API_KEY")
+if not DEEPSEEK_API_KEY:
+    raise ValueError("No DEEPSEEK_API_KEY found in environment variables")
 
 def generate_fortune(transcription_text):
     """Generate a fortune telling using DeepSeek API"""
