@@ -1,11 +1,17 @@
 import speech_recognition as sr
+from pydub import AudioSegment
 
 def transcribe_audio(file_path):
     # Initialize recognizer
     recognizer = sr.Recognizer()
 
-    # Load the audio file
-    with sr.AudioFile(file_path) as source:
+    # Convert MP3 to WAV
+    sound = AudioSegment.from_mp3(file_path)
+    wav_path = file_path.replace(".mp3", ".wav")
+    sound.export(wav_path, format="wav")
+
+    # Load the converted WAV file
+    with sr.AudioFile(wav_path) as source:
         audio = recognizer.record(source)  # Read the entire audio file
 
     # Transcribe using Google Speech Recognition
