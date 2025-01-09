@@ -1,5 +1,7 @@
 import speech_recognition as sr
 from pydub import AudioSegment
+import os
+from pathlib import Path
 
 def transcribe_audio(file_path):
     # Initialize recognizer
@@ -22,14 +24,39 @@ def transcribe_audio(file_path):
         return "Google Speech Recognition could not understand the audio"
     except sr.RequestError as e:
         return f"Could not request results from Google Speech Recognition service; {e}"
+    finally:
+        # Clean up temporary WAV file
+        if os.path.exists(wav_path):
+            os.remove(wav_path)
+
+def process_all_mp3_files():
+    # Directory containing the .mp3 files
+    voices_dir = Path("voices")
+    
+    # Directory to store transcriptions
+    transcriptions_dir = Path("transcriptions")
+    transcriptions_dir.mkdir(exist_ok=True)
+
+    # Find all .mp3 files in the voices directory
+    mp3_files = list(voices_dir.glob("*.mp3"))
+
+    if not mp3_files:
+        print("No .mp3 files found in the 'voices' directory.")
+        return
+
+    # Process each MP3 file
+    for mp3_file in mp3_files:
+        print(f"Processing {mp3_file.name}...")
+        
+        # Transcribe the audio
+        transcription = transcribe_audio(str(mp3_file))
+        
+        # Save transcription to file
+        output_file = transcriptions_dir / f"{mp3_file.stem}.txt"
+        with open(output_file, "w", encoding="utf-8") as f:
+            f.write(transcription)
+        
+        print(f"Transcription saved to {output_file}\n")
 
 if __name__ == "__main__":
-    audio_file = "voices/1.mp3"
-    transcription = transcribe_audio(audio_file)
-    
-    # Save transcription to file
-    output_file = audio_file.replace(".mp3", ".txt")
-    with open(output_file, "w", encoding="utf-8") as f:
-        f.write(transcription)
-    
-    print(f"Transcription saved to {output_file}")
+    process_all_mp3_files()
