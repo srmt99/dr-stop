@@ -63,12 +63,13 @@ def health():
 
 @app.route('/dr_stop_estekhare')  # Updated route
 def dr_stop():
-    # Store the selected voice in session
-    session.permanent = True
+    # Always get a new random voice for each request
     voice_file = get_random_voice()
     if not voice_file:
         return "No voices available", 404
     
+    # Store the selected voice in session
+    session.permanent = True
     session['current_voice'] = str(voice_file)
 
     # Check for corresponding transcription
