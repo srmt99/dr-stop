@@ -28,6 +28,15 @@ def dr_stop():
     
     session['current_voice'] = str(voice_file)
 
+    # Check for corresponding transcription
+    transcription_text = ""
+    voice_number = voice_file.stem  # Get the number from filename (without extension)
+    transcription_file = Path(f"transcriptions/{voice_number}.txt")
+    
+    if transcription_file.exists():
+        with open(transcription_file, 'r', encoding='utf-8') as f:
+            transcription_text = f.read().strip()
+
     # Serve an HTML page with an embedded audio player
     return render_template_string('''
         <!DOCTYPE html>
@@ -49,6 +58,14 @@ def dr_stop():
                     audio {
                         width: 100%;
                     }
+                    .transcription {
+                        margin-top: 20px;
+                        padding: 15px;
+                        background-color: #f5f5f5;
+                        border-radius: 5px;
+                        text-align: right;
+                        direction: rtl;
+                    }
                 </style>
             </head>
             <body>
@@ -57,11 +74,18 @@ def dr_stop():
                     <audio controls autoplay>
                     <source src="{{ url_for('serve_audio') }}" type="{{ mimetype }}">
                     Your browser does not support the audio element.
-                </audio>
+                    </audio>
+                    {% if transcription %}
+                    <div class="transcription">
+                        <p>فال شما این است:</p>
+                        <p>{{ transcription }}</p>
+                    </div>
+                    {% endif %}
                 </div>
             </body>
         </html>
-    ''', mimetype="audio/mpeg" if voice_file.suffix == ".mp3" else "audio/ogg")
+    ''', mimetype="audio/mpeg" if voice_file.suffix == ".mp3" else "audio/ogg",
+        transcription=transcription_text)
 
 @app.route('/dr_avatar')
 def serve_avatar():
