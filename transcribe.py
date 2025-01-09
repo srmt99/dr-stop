@@ -26,5 +26,10 @@ def transcribe_audio(file_path):
 if __name__ == "__main__":
     audio_file = "voices/1.mp3"
     transcription = transcribe_audio(audio_file)
-    print("Transcription:")
-    print(transcription)
+    
+    # Save transcription to file
+    output_file = audio_file.replace(".mp3", ".txt")
+    with open(output_file, "w", encoding="utf-8") as f:
+        f.write(transcription)
+    
+    print(f"Transcription saved to {output_file}")
