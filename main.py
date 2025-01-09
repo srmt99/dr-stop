@@ -22,4 +22,9 @@ def organize_voices():
         print(f"Moved {sound_file} -> {new_name}")
 
 if __name__ == "__main__":
+    import argparse
+    parser = argparse.ArgumentParser(description='Organize voice files')
+    parser.add_argument('--port', type=int, default=3100, help='Port to run the server on (if applicable)')
+    args = parser.parse_args()
+    
     organize_voices()

@@ -117,4 +117,9 @@ def serve_audio():
     )
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=3100)
+    import argparse
+    parser = argparse.ArgumentParser(description='Run the fortune telling server')
+    parser.add_argument('--port', type=int, default=3100, help='Port to run the server on')
+    args = parser.parse_args()
+    
+    app.run(host='0.0.0.0', port=args.port)
