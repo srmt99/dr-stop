@@ -34,15 +34,38 @@ def dr_stop():
         <html>
             <head>
                 <title>Play Audio</title>
+                <style>
+                    .container {
+                        max-width: 600px;
+                        margin: 0 auto;
+                        text-align: center;
+                    }
+                    img {
+                        max-width: 100%;
+                        height: auto;
+                        border-radius: 50%;
+                        margin-bottom: 20px;
+                    }
+                    audio {
+                        width: 100%;
+                    }
+                </style>
             </head>
             <body>
-                <audio controls autoplay>
+                <div class="container">
+                    <img src="{{ url_for('serve_avatar') }}" alt="Dr. Avatar">
+                    <audio controls autoplay>
                     <source src="{{ url_for('serve_audio') }}" type="{{ mimetype }}">
                     Your browser does not support the audio element.
                 </audio>
+                </div>
             </body>
         </html>
     ''', mimetype="audio/mpeg" if voice_file.suffix == ".mp3" else "audio/ogg")
+
+@app.route('/dr_avatar')
+def serve_avatar():
+    return send_file('images/dr_avatar.jpg', mimetype='image/jpeg')
 
 @app.route('/serve_audio')
 def serve_audio():
