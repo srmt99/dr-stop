@@ -1,0 +1,25 @@
+import os
+from pathlib import Path
+
+def organize_voices():
+    """Organize voice files into voices directory"""
+    # Create voices directory if it doesn't exist
+    voices_dir = Path("voices")
+    voices_dir.mkdir(exist_ok=True)
+    
+    # Find all sound files
+    sound_files = []
+    for root, _, files in os.walk("."):
+        for file in files:
+            if file.lower().endswith((".mp3", ".ogg")):
+                sound_files.append(Path(root) / file)
+    
+    # Rename and move files
+    for i, sound_file in enumerate(sound_files):
+        ext = sound_file.suffix.lower()
+        new_name = voices_dir / f"{i}{ext}"
+        sound_file.rename(new_name)
+        print(f"Moved {sound_file} -> {new_name}")
+
+if __name__ == "__main__":
+    organize_voices()
