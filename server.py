@@ -1,8 +1,11 @@
-from flask import Flask, send_file, render_template_string, request
+from flask import Flask, send_file, render_template_string, request, session
 import random
 from pathlib import Path
+from datetime import timedelta
 
 app = Flask(__name__)
+app.secret_key = 'your-secret-key-here'  # Change this to a real secret key
+app.permanent_session_lifetime = timedelta(minutes=5)  # Session lasts 5 minutes
 
 def get_random_voice():
     voices_dir = Path("voices")
@@ -17,9 +20,13 @@ def health():
 
 @app.route('/dr_stop_estekhare')  # Updated route
 def dr_stop():
+    # Store the selected voice in session
+    session.permanent = True
     voice_file = get_random_voice()
     if not voice_file:
         return "No voices available", 404
+    
+    session['current_voice'] = str(voice_file)
 
     # Serve an HTML page with an embedded audio player
     return render_template_string('''
@@ -39,9 +46,12 @@ def dr_stop():
 
 @app.route('/serve_audio')
 def serve_audio():
-    voice_file = get_random_voice()
-    if not voice_file:
-        return "No voices available", 404
+    if 'current_voice' not in session:
+        return "No voice selected", 404
+    
+    voice_file = Path(session['current_voice'])
+    if not voice_file.exists():
+        return "Voice file not found", 404
 
     # Determine the MIME type based on the file extension
     if voice_file.suffix == ".mp3":
