@@ -152,6 +152,14 @@ def dr_stop_radio():
     """Continuous audio stream of random voices with avatar"""
     return render_template('radio.html')
 
+@app.route('/service-worker.js')
+def serve_service_worker():
+    return send_file('service-worker.js', mimetype='application/javascript')
+
+@app.route('/manifest.json')
+def serve_manifest():
+    return send_file('manifest.json', mimetype='application/json')
+
 @app.route('/dr_stop_radio_stream')
 def dr_stop_radio_stream():
     """Audio stream endpoint for the radio"""

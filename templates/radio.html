@@ -3,6 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="mobile-web-app-capable" content="yes">
+    <link rel="manifest" href="/manifest.json">
     <title>Dr. Stop Radio</title>
     <style>
         body {
@@ -36,9 +39,16 @@
     <h3 style="color: #9dffe2; margin: 20px; font-style: italic;">
         برای آرامش روان و تجدید قوا به صدای شفابخش دکتر گوش بده خوارکصه
     </h3>
-    <audio controls autoplay>
+    <audio controls autoplay playsinline>
         <source src="/dr_stop_radio_stream" type="audio/mpeg">
         Your browser does not support the audio element.
     </audio>
+    <script>
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('/service-worker.js')
+                .then(registration => console.log('ServiceWorker registered'))
+                .catch(err => console.log('ServiceWorker registration failed: ', err));
+        }
+    </script>
 </body>
 </html>
