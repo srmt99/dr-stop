@@ -2,6 +2,27 @@ import os
 import subprocess
 from pathlib import Path
 
+def process_transcriptions():
+    """Process all text files in transcriptions directory"""
+    transcriptions_dir = Path("transcriptions")
+    txt_files = list(transcriptions_dir.glob("*.txt"))
+    
+    if not txt_files:
+        print("No .txt files found in the 'transcriptions' directory.")
+        return
+        
+    for txt_file in txt_files:
+        try:
+            with open(txt_file, 'r', encoding='utf-8') as f:
+                content = f.read()
+                
+            if "Google Speech Recognition" in content:
+                with open(txt_file, 'w', encoding='utf-8') as f:
+                    f.write("یک فال رندوم ایجاد کن")
+                print(f"Updated {txt_file} with Persian text")
+        except Exception as e:
+            print(f"Failed to process {txt_file}: {e}")
+
 # Directory containing the .ogg files
 voices_dir = Path("voices")
 
@@ -48,4 +69,7 @@ try:
 except OSError as e:
     print(f"Failed to clean up temporary directory: {e}")
 
-print("Conversion complete!")
+# Process transcriptions after audio conversion
+process_transcriptions()
+
+print("Conversion and transcription processing complete!")
