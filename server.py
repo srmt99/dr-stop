@@ -61,8 +61,18 @@ def get_random_voice():
 def health():
     return "OK", 200
 
+@app.route('/serve_avatar_closed')
+def serve_avatar_closed():
+    return send_file('images/dr_avatar_closed.png', mimetype='image/png')
+
 @app.route('/dr_stop_estekhare')  # Updated route
 def dr_stop():
+    # Check if we're showing the loading state
+    if 'fortune_generated' not in session:
+        # Show loading state first
+        session['fortune_generated'] = False
+        return render_template('loading.html')
+    
     # Always get a new random voice for each request
     voice_file = get_random_voice()
     if not voice_file:
@@ -83,7 +93,10 @@ def dr_stop():
             transcription_text = f.read().strip()
             fortune_text = generate_fortune(transcription_text)
 
-    # Serve an HTML page with an embedded audio player
+    # Mark fortune as generated
+    session['fortune_generated'] = True
+    
+    # Serve the final result
     return render_template('index.html',
         mimetype="audio/mpeg" if voice_file.suffix == ".mp3" else "audio/ogg",
         transcription=fortune_text)

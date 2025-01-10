@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>در حال فال گرفتن</title>
+        <style>
+            .container {
+                max-width: 600px;
+                margin: 0 auto;
+                text-align: center;
+            }
+            img {
+                max-width: 100%;
+                height: auto;
+                border-radius: 50%;
+                margin-bottom: 20px;
+            }
+            .loading-text {
+                margin-top: 20px;
+                font-size: 1.5em;
+                color: #666;
+                direction: rtl;
+            }
+        </style>
+        <script>
+            // Refresh the page after 3 seconds
+            setTimeout(function() {
+                window.location.reload();
+            }, 3000);
+        </script>
+    </head>
+    <body>
+        <div class="container">
+            <img src="{{ url_for('serve_avatar_closed') }}" alt="Dr. Avatar">
+            <div class="loading-text">
+                دکتر داره برات خواب می بینه... یکم صبر کن تا...
+            </div>
+        </div>
+    </body>
+</html>
