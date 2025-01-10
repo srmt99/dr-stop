@@ -1,1 +1,1 @@
-Could not request results from Google Speech Recognition service; recognition connection failed: [Errno 32] Broken pipe
+یک فال رندوم ایجاد کن

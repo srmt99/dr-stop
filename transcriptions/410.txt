@@ -1,1 +1,1 @@
-Could not request results from Google Speech Recognition service; recognition request failed: Bad Request
+یک فال رندوم ایجاد کن
