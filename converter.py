@@ -11,6 +11,7 @@ def process_transcriptions():
         print("No .txt files found in the 'transcriptions' directory.")
         return
         
+    updated_count = 0
     for txt_file in txt_files:
         try:
             with open(txt_file, 'r', encoding='utf-8') as f:
@@ -20,6 +21,7 @@ def process_transcriptions():
                 with open(txt_file, 'w', encoding='utf-8') as f:
                     f.write("یک فال رندوم ایجاد کن")
                 print(f"Updated {txt_file} with Persian text")
+                updated_count += 1
         except Exception as e:
             print(f"Failed to process {txt_file}: {e}")
 
@@ -72,4 +74,4 @@ except OSError as e:
 # Process transcriptions after audio conversion
 process_transcriptions()
 
-print("Conversion and transcription processing complete!")
+print(f"Conversion and transcription processing complete! Updated {updated_count} transcription files.")
