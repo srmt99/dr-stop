@@ -183,6 +183,14 @@ if __name__ == '__main__':
     import argparse
     parser = argparse.ArgumentParser(description='Run the fortune telling server')
     parser.add_argument('--port', type=int, default=3100, help='Port to run the server on')
+    parser.add_argument('--ssl-cert', help='Path to SSL certificate file')
+    parser.add_argument('--ssl-key', help='Path to SSL private key file')
     args = parser.parse_args()
     
-    app.run(host='0.0.0.0', port=args.port)
+    ssl_context = None
+    if args.ssl_cert and args.ssl_key:
+        ssl_context = (args.ssl_cert, args.ssl_key)
+    
+    app.run(host='0.0.0.0', 
+            port=args.port, 
+            ssl_context=ssl_context)

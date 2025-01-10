@@ -1,3 +1,8 @@
+// Ensure we're running in a secure context
+if (location.protocol !== 'https:') {
+  throw new Error('Service workers require HTTPS');
+}
+
 const CACHE_NAME = 'dr-stop-radio-v1';
 const ASSETS = [
   '/dr_avatar',
