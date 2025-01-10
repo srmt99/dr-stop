@@ -13,5 +13,12 @@
   "display": "standalone",
   "scope": "/",
   "theme_color": "#1a1a1a",
-  "description": "Dr. Stop Radio - Continuous Persian fortune telling"
+  "description": "Dr. Stop Radio - Continuous Persian fortune telling",
+  "permissions": [
+    "audio",
+    "background"
+  ],
+  "background": {
+    "service_worker": "service-worker.js"
+  }
 }
