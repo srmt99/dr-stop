@@ -9,7 +9,7 @@ def process_transcriptions():
     
     if not txt_files:
         print("No .txt files found in the 'transcriptions' directory.")
-        return
+        return 0
         
     updated_count = 0
     for txt_file in txt_files:
@@ -72,6 +72,6 @@ except OSError as e:
     print(f"Failed to clean up temporary directory: {e}")
 
 # Process transcriptions after audio conversion
-process_transcriptions()
+updated_count = process_transcriptions()
 
 print(f"Conversion and transcription processing complete! Updated {updated_count} transcription files.")
