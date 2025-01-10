@@ -1,4 +1,5 @@
-from flask import Flask, send_file, render_template, request, session
+from flask import Flask, send_file, render_template, request, session, Response
+import time
 import random
 import requests
 import json
@@ -105,6 +106,22 @@ def dr_stop():
 def serve_avatar():
     return send_file('images/dr_avatar.jpg', mimetype='image/jpeg')
 
+def generate_audio_stream():
+    """Generate a continuous stream of random audio files"""
+    while True:
+        voice_file = get_random_voice()
+        if not voice_file:
+            yield b""
+            continue
+            
+        # Add a small delay between files
+        time.sleep(0.5)
+        
+        # Read the audio file in chunks
+        with open(voice_file, 'rb') as f:
+            while chunk := f.read(1024 * 1024):  # Read 1MB chunks
+                yield chunk
+
 @app.route('/serve_audio')
 def serve_audio():
     if 'current_voice' not in session:
@@ -128,6 +145,25 @@ def serve_audio():
         mimetype=mimetype,
         as_attachment=False,
         conditional=True  # Enable range requests
+    )
+
+@app.route('/dr_stop_radio')
+def dr_stop_radio():
+    """Continuous audio stream of random voices"""
+    voice_file = get_random_voice()
+    if not voice_file:
+        return "No voices available", 404
+        
+    # Determine MIME type
+    mimetype = "audio/mpeg" if voice_file.suffix == ".mp3" else "audio/ogg"
+    
+    return Response(
+        generate_audio_stream(),
+        mimetype=mimetype,
+        headers={
+            'Cache-Control': 'no-cache',
+            'Transfer-Encoding': 'chunked'
+        }
     )
 
 if __name__ == '__main__':
