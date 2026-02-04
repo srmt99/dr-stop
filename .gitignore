@@ -1,0 +1,12 @@
+.aider*
+.env
+*.env
+.env*
+env/
+venv/
+ENV/
+.env.local
+.env.*.local
+__pycache__/
+*.pyc
+.env

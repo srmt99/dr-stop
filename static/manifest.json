@@ -1,0 +1,24 @@
+{
+  "short_name": "Dr.Stop",
+  "name": "Dr. Stop Radio",
+  "icons": [
+    {
+      "src": "/images/dr_avatar_closed.png",
+      "type": "image/png",
+      "sizes": "192x192"
+    }
+  ],
+  "start_url": "/dr_stop_radio",
+  "background_color": "#1a1a1a",
+  "display": "standalone",
+  "scope": "/",
+  "theme_color": "#1a1a1a",
+  "description": "Dr. Stop Radio - Continuous Persian fortune telling",
+  "permissions": [
+    "audio",
+    "background"
+  ],
+  "background": {
+    "service_worker": "service-worker.js"
+  }
+}
