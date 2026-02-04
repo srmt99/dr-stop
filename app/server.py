@@ -33,7 +33,7 @@ def generate_fortune(transcription_text, prompt_template):
     data = {
         "model": "deepseek-chat",
         "messages": [
-            {"role": "system", "content": "You are a funny Persian fortune teller."},
+            {"role": "system", "content": "You are a funny Persian fortune teller who is not afraid of upsetting a person!."},
             {"role": "user", "content": prompt}
         ],
         "temperature": 0.7,
