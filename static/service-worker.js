@@ -5,7 +5,7 @@ if (location.protocol !== 'https:') {
 
 const CACHE_NAME = 'dr-stop-radio-v1';
 const ASSETS = [
-  '/dr_avatar',
+  '/images/dr_avatar.jpg',
   '/dr_stop_radio_stream',
   '/images/dr_avatar_closed.png'
 ];

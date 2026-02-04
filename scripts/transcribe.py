@@ -3,6 +3,9 @@ from pydub import AudioSegment
 import os
 from pathlib import Path
 
+BASE_DIR = Path(__file__).resolve().parent.parent
+DATA_DIR = BASE_DIR / "data"
+
 def transcribe_audio(file_path):
     # Initialize recognizer
     recognizer = sr.Recognizer()
@@ -31,10 +34,10 @@ def transcribe_audio(file_path):
 
 def process_all_mp3_files():
     # Directory containing the .mp3 files
-    voices_dir = Path("voices")
+    voices_dir = DATA_DIR / "voices"
     
     # Directory to store transcriptions
-    transcriptions_dir = Path("transcriptions")
+    transcriptions_dir = DATA_DIR / "transcriptions"
     transcriptions_dir.mkdir(exist_ok=True)
 
     # Find all .mp3 files in the voices directory

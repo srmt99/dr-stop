@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="fa">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dr. Stop Clinic</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin: 0;
+            padding: 40px 20px;
+            background: #f7f7f7;
+            color: #222;
+        }
+        h1 {
+            margin: 0 0 30px;
+            font-size: 2rem;
+        }
+        .choices {
+            display: flex;
+            gap: 16px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        .choice {
+            display: inline-block;
+            padding: 14px 28px;
+            background: #222;
+            color: #fff;
+            text-decoration: none;
+            border-radius: 8px;
+            font-size: 1.1rem;
+        }
+        .choice:focus,
+        .choice:hover {
+            background: #000;
+        }
+    </style>
+</head>
+<body>
+    <h1>به درمانگاه دکتر استاپ خوش امدید</h1>
+    <h3>اینجا درمانگاه فشار های روانی ایرانی بگا رفته از مسائل سیاسی اجتماعی و فرهنگیه</h3>
+    <img src="{{ url_for('static', filename='images/dr_avatar.jpg') }}" alt="Dr. Stop Avatar" style="max-width: 240px; border-radius: 50%; margin: 20px 0;">
+    <div class="choices">
+        <a class="choice" href="/dr_stop_estekhare">استخاره</a>
+        <a class="choice" href="/dr_stop_radio">رادیو</a>
+    </div>
+</body>
+</html>

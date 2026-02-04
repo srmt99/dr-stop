@@ -1,15 +1,18 @@
 import os
 from pathlib import Path
 
+BASE_DIR = Path(__file__).resolve().parent.parent
+DATA_DIR = BASE_DIR / "data"
+
 def organize_voices():
     """Organize voice files into voices directory"""
     # Create voices directory if it doesn't exist
-    voices_dir = Path("voices")
+    voices_dir = DATA_DIR / "voices"
     voices_dir.mkdir(exist_ok=True)
     
     # Find all sound files
     sound_files = []
-    for root, _, files in os.walk("."):
+    for root, _, files in os.walk(str(BASE_DIR)):
         for file in files:
             if file.lower().endswith((".mp3", ".ogg")):
                 sound_files.append(Path(root) / file)

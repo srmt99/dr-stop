@@ -1,12 +1,17 @@
-from flask import Flask, send_file, render_template, request, session, Response
+from flask import Flask, send_file, render_template, session, Response
 import time
 import random
 import requests
-import json
 from pathlib import Path
 from datetime import timedelta
 from dotenv import load_dotenv
 import os
+
+# Load environment variables from .env file
+BASE_DIR = Path(__file__).resolve().parent.parent
+DATA_DIR = BASE_DIR / "data"
+STATIC_DIR = BASE_DIR / "static"
+TEMPLATES_DIR = BASE_DIR / "templates"
 
 # Load environment variables from .env file
 load_dotenv()
@@ -16,15 +21,13 @@ DEEPSEEK_API_KEY = os.getenv("DEEPSEEK_API_KEY")
 if not DEEPSEEK_API_KEY:
     raise ValueError("No DEEPSEEK_API_KEY found in environment variables")
 
-def generate_fortune(transcription_text):
+def generate_fortune(transcription_text, prompt_template):
     """Generate a fortune telling using DeepSeek API"""
     headers = {
         "Authorization": f"Bearer {DEEPSEEK_API_KEY}",
         "Content-Type": "application/json"
     }
-    
-    with open('prompt.txt', 'r', encoding='utf-8') as f:
-        prompt_template = f.read().strip()
+
     prompt = f"{prompt_template}\n{transcription_text}"
     
     data = {
@@ -47,12 +50,17 @@ def generate_fortune(transcription_text):
         print(f"Error generating fortune: {e}")
         return "امروز فال‌گیری خوابه! بعداً بیا :)"
 
-app = Flask(__name__)
+app = Flask(
+    __name__,
+    static_folder=str(STATIC_DIR),
+    static_url_path="",
+    template_folder=str(TEMPLATES_DIR),
+)
 app.secret_key = 'your-secret-key-here'  # Change this to a real secret key
 app.permanent_session_lifetime = timedelta(minutes=5)  # Session lasts 5 minutes
 
 def get_random_voice():
-    voices_dir = Path("voices")
+    voices_dir = DATA_DIR / "voices"
     voices = list(voices_dir.glob("*.[mo][pg][g3]"))  # Matches .mp3 and .ogg
     if not voices:
         return None
@@ -62,23 +70,21 @@ def get_random_voice():
 def health():
     return "OK", 200
 
-@app.route('/serve_avatar_closed')
-def serve_avatar_closed():
-    return send_file('images/dr_avatar_closed.png', mimetype='image/png')
+@app.route('/')
+def home():
+    return render_template('home.html')
 
-@app.route('/dr_stop_estekhare')  # Updated route
+@app.route('/dr_stop_estekhare')
 def dr_stop():
-    # Check if we're showing the loading state
-    if 'fortune_generated' not in session:
-        # Show loading state first
-        session['fortune_generated'] = False
-        return render_template('loading.html')
-    
+    return render_template('loading.html')
+
+@app.route('/dr_stop_estekhare/result')
+def dr_stop_result():
     # Always get a new random voice for each request
     voice_file = get_random_voice()
     if not voice_file:
         return "No voices available", 404
-    
+
     # Store the selected voice in session
     session.permanent = True
     session['current_voice'] = str(voice_file)
@@ -86,25 +92,23 @@ def dr_stop():
     # Check for corresponding transcription
     transcription_text = ""
     voice_number = voice_file.stem  # Get the number from filename (without extension)
-    transcription_file = Path(f"transcriptions/{voice_number}.txt")
-    
+    transcription_file = DATA_DIR / "transcriptions" / f"{voice_number}.txt"
+
     fortune_text = ""
     if transcription_file.exists():
         with open(transcription_file, 'r', encoding='utf-8') as f:
             transcription_text = f.read().strip()
-            fortune_text = generate_fortune(transcription_text)
+            prompt_file = random.choice([
+                DATA_DIR / "prompts" / "estekhare_negative.txt",
+                DATA_DIR / "prompts" / "estekhare_positive.txt",
+            ])
+            with open(prompt_file, 'r', encoding='utf-8') as pf:
+                prompt_template = pf.read().strip()
+            fortune_text = generate_fortune(transcription_text, prompt_template)
 
-    # Mark fortune as generated
-    session['fortune_generated'] = True
-    
-    # Serve the final result
     return render_template('index.html',
         mimetype="audio/mpeg" if voice_file.suffix == ".mp3" else "audio/ogg",
         transcription=fortune_text)
-
-@app.route('/dr_avatar')
-def serve_avatar():
-    return send_file('images/dr_avatar.jpg', mimetype='image/jpeg')
 
 def generate_audio_stream():
     """Generate a continuous stream of random audio files"""
@@ -151,14 +155,6 @@ def serve_audio():
 def dr_stop_radio():
     """Continuous audio stream of random voices with avatar"""
     return render_template('radio.html')
-
-@app.route('/service-worker.js')
-def serve_service_worker():
-    return send_file('service-worker.js', mimetype='application/javascript')
-
-@app.route('/manifest.json')
-def serve_manifest():
-    return send_file('manifest.json', mimetype='application/json')
 
 @app.route('/dr_stop_radio_stream')
 def dr_stop_radio_stream():

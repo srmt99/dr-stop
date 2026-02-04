@@ -1,8 +1,11 @@
 from pathlib import Path
 
+BASE_DIR = Path(__file__).resolve().parent.parent
+DATA_DIR = BASE_DIR / "data"
+
 def process_transcriptions():
     """Process all text files in transcriptions directory"""
-    transcriptions_dir = Path("transcriptions")
+    transcriptions_dir = DATA_DIR / "transcriptions"
     txt_files = list(transcriptions_dir.glob("*.txt"))
     
     if not txt_files:
